@@ -1,31 +1,23 @@
-unit helper;
+unit myFiles;
 
 interface
+
 uses SysUtils, Windows, Forms, Messages, SHFolder, idGlobal, ShellApi;
 
 
-  function RGB2TColor(const R, G, B: Byte): Integer;
-  //function getHomePath():string;
   procedure createPathIfNotExists( path: string );
-  function quote( filename:string ):string;
-  function ShellExecute_AndWait(Operation, FileName, Parameter, Directory: string;
-  Show: Word; bWait: Boolean): Longint;
-  
+
+  function ShellExecute_AndWait(Operation, FileName, Parameter, Directory: string; Show: Word; bWait: Boolean): Longint;
+
+  function getHomePath():string;
   function getAppDataPath():string;
   function GetAppVersionStr: string;
-  procedure openArticleInBrowser( article: string );
-  procedure openFileExternal( filename: string );
-  function replaceFixedDriveLetters( filename:string ):string;
+
   function isFile( filename:string ):boolean;
   function isSvgFile( filename:string ):boolean;
 
-implementation
 
-function RGB2TColor(const R, G, B: Byte): Integer;
-begin
-  // convert hexa-decimal values to RGB
-  Result := R + (G shl 8) + (B shl 16);
-end;
+implementation
 
 
 (*  typical values for folderType
@@ -98,21 +90,6 @@ begin
      LongRec(FixedPtr.dwFileVersionLS).Lo]) //build
 end;
 
-procedure openArticleInBrowser( article: string );
-var link:string;
-
-begin
-    link:='http://tank/abas/?action=search&search='+article;
-
-    ShellExecute(0,
-               'open',
-               PCHAR(link),
-               nil,
-               nil,
-               SW_SHOW);
-end;
-
-
 (*
     This function opens a file and lets windows decide
     which program to use.
@@ -126,24 +103,6 @@ begin
     ShellExecute(0, nil, PChar(link), nil,  nil, SW_SHOWNORMAL);
 end;
 
-function replaceFixedDriveLetters( filename:string ):string;
-var temp:string;
-    index:integer;
-begin
-  temp:= filename;
-  if (pos('W:', upperCase( filename)) > 0) then begin
-    // replace "W:"
-    temp:= copy(filename, 3, length(filename)-2);
-    temp:= '\\hseb-sv2\Daten'+temp;
-  end;
-
-  result:= temp;
-end;
-
-function quote( filename:string ):string;
-begin
-  result:= '"'+filename+'"';
-end;
 {
   ****** Parameters ******
   Operation:
@@ -213,6 +172,7 @@ function isFile( filename:string ):boolean;
 var
   DirEx   : Cardinal;
 begin
+  result:= false;
   if fileexists(filename)=false then begin
     result:=false;
     exit;
