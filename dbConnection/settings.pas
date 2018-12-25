@@ -1,11 +1,14 @@
 unit settings;
 
 interface
-uses  SysUtils, Classes, mytypes,
-      csvFileDatabase;
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  mytypes,csvFileDatabase;
 
 type
-  TSettings = class(TObject)
+  TsettingsUI = class(TForm)
     constructor Create(csvFilename:string);
 
     public
@@ -23,15 +26,18 @@ type
 
 
 implementation
+{$R *.dfm}
 
-constructor TSettings.Create(csvFilename:string);
+constructor TsettingsUI.Create(csvFilename:string);
 begin
-  inherited Create();
+  inherited Create(nil);
   csvFileDatabase:= TCsvFileDataBase.Create(csvFilename);
   csvFileDatabase.loadAllRowsFromDBintoMem();
+
+  self.Visible:= false;
 end;
 
-function TSettings.getSetting(name: string):string;
+function TsettingsUI.getSetting(name: string):string;
 var row:TStringList;
 begin
   row:= csvFileDatabase.searchRowInMem( name, COL_NAME);

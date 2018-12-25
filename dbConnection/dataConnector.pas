@@ -15,13 +15,17 @@ type
 
     // use startQuery + getRow to browse through table
     procedure startQuery( tableName:string );
-    function getRowFromTable( tableName:string ):TStringList;
+    function getRowFromTable( tableName:string ):TStringListPtr;
 
     // write to table
-    procedure addRowToTable( tableName:string; row:TStringList );
+    procedure addRowToTable( tableName:string; row:TStringListPtr );
 
     //
     function getDatabaseFolder(): string;
+
+    //
+    procedure showLocalSettings();
+    procedure showGlobalSettings();
 
   private
     function getTable( tableName:string ): TCsvFileDatabase;
@@ -32,6 +36,7 @@ type
     globalSettings:TGlobalSettings;
 
     tables:TStringList;
+    rowIndex: integer;
 
   CONST DB_GLOBAL_CACHE_FOLDER: string = 'CACHE_FOLDER';
 end;
@@ -50,6 +55,31 @@ begin
   localSettings.Free;
   globalSettings.Free;
   inherited Destroy;
+end;
+
+procedure TDataConnector.doConnect();
+begin
+  // this is the local file that holds settings per computer only
+  try
+    localSettings:=  TLocalSettings.Create();
+  except
+    localSettings:= nil;
+    raise Exception.Create('TDataConnector.doConnect() failed - check local folder permissions.');
+  end;
+
+
+  try
+    // this is the main file for the database (shared with multiple computers)
+    globalSettings:= TGlobalSettings.Create( localSettings.globalDatabaseFolder );
+  except
+    globalSettings:= nil;
+    raise Exception.Create('TDataConnector.doConnect() failed - check global folder permissions.');
+  end;
+
+  // check if all subtables are present
+  // todo
+
+  isConnected:= true;
 end;
 
 function TDataConnector.getTable( tableName: string ): TCsvFileDatabase;
@@ -90,21 +120,6 @@ begin
 
 end;
 
-
-procedure TDataConnector.doConnect();
-begin
-  // this is the local file that holds settings per computer only
-  localSettings:=  TLocalSettings.Create();
-
-  // this is the main file for the database (shared with multiple computers)
-  globalSettings:= TGlobalSettings.Create( localSettings.globalDatabaseFolder );
-
-  // check if all subtables are present
-  // todo
-
-  isConnected:= true;
-end;
-
 procedure TDataConnector.startQuery( tableName:string );
 var csvFileDatabase: TCsvFileDatabase;
 begin
@@ -117,11 +132,29 @@ begin
     raise Exception.Create('Fehlermeldung');
   end;
 
-  csvFileDatabase.rewind;
-
+  rowIndex:= 0;
 end;
 
-function TDataConnector.getRowFromTable( tableName:string ):TStringList;
+function TDataConnector.getRowFromTable( tableName:string ):TStringListPtr;
+var csvFileDatabase: TCsvFileDatabase;
+    row:TStringListPtr;
+begin
+  if not isConnected then begin
+    raise Exception.Create('Database not connected');
+  end;
+
+  csvFileDatabase:= getTable(tableName);
+  if (csvFileDatabase = nil) then begin
+    raise Exception.Create('Fehlermeldung');
+  end;
+
+  row:= csvFileDatabase.getRowFromMem(rowIndex);
+  INC(rowIndex);
+
+  result:= row;
+end;
+
+procedure TDataConnector.addRowToTable( tableName:string; row:TStringListPtr );
 var csvFileDatabase: TCsvFileDatabase;
 begin
   if not isConnected then begin
@@ -133,28 +166,27 @@ begin
     raise Exception.Create('Fehlermeldung');
   end;
 
-  result:= csvFileDatabase.readNextLine();
-end;
-
-procedure TDataConnector.addRowToTable( tableName:string; row:TStringList );
-var csvFileDatabase: TCsvFileDatabase;
-begin
-  if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  csvFileDatabase.appendLine( row );
+  csvFileDatabase.addRowToMem( row );
 end;
 
 
 function TDataConnector.getDatabaseFolder(): string;
 begin
   result:= localSettings.globalDatabaseFolder;
+end;
+
+procedure TDataConnector.showLocalSettings();
+begin
+  if (localSettings <> nil) then begin
+    localSettings.showSettings;
+  end;
+end;
+
+procedure TDataConnector.showGlobalSettings();
+begin
+  if (globalSettings<>nil) then begin
+    globalSettings.showSettings;
+  end;
 end;
 
 end.

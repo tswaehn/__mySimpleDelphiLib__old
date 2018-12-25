@@ -1,7 +1,7 @@
 unit globalSettings;
 
 interface
-uses settings;
+uses settingsBase;
 
 type
   TGlobalSettings = class(TSettings)
@@ -15,7 +15,7 @@ constructor TGlobalSettings.Create(databaseDir:string);
 begin
   inherited Create( databaseDir+'.\global.csv');
 
-
+  myName:='global settings';
 end;
 
 end.

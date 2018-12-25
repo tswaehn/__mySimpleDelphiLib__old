@@ -1,7 +1,7 @@
 unit localSettings;
 
 interface
-uses settings;
+uses settingsBase;
 
 type
   TLocalSettings = class(TSettings)
@@ -21,7 +21,12 @@ begin
 
   globalDatabaseFolder:= self.getSetting(GLOBAL_DATABASE_FOLDER);
 
+  if globalDatabaseFolder ='' then begin
+    setSetting(GLOBAL_DATABASE_FOLDER,'c:\temp\');
+    storeSettings();
+  end;
 
+  myName:='local settings';
 end;
 
 end.
