@@ -1,7 +1,7 @@
 unit pearsonHash;
 
 interface
-uses dialogs;
+uses dialogs, sysutils;
 
 type
     TByteArray = array of byte;
@@ -16,6 +16,9 @@ type
   *)
   function pearsonHash24( byteArray:array of byte; len:integer ):integer;
   function pearsonHash24fromInt( int:int64 ):integer;
+
+  function pearsonHash32( byteArray:array of byte; len:integer ):integer;
+  function pearsonHash32fromStr( str:string):integer;
 
 implementation
 
@@ -96,5 +99,52 @@ begin
   byteArray._Int64:= int;
   result:= pearsonHash24( byteArray._Byte, 8 );
 end;
+
+// generate a 32bit hash
+function pearsonHash32( byteArray: array of byte; len:integer ):integer;
+var
+  j: Integer;
+  h:byte;
+  b:byte;
+  i: Integer;
+  res: TInt32Rec;
+begin
+
+  // reset
+  res._Int32:= 0;
+
+  // create only 4bytes
+  for j := 0 to 3 do begin
+    b:= byteArray[0];
+    h:= T[ (b + j) mod 256 ];
+    for i := 1 to len do begin
+      b:= byteArray[i];
+      h:= T[ h xor b ];
+    end;
+    res._Byte[j]:= h;
+  end;
+
+  i:= res._Int32;
+
+  // attention: lsb is bit31, msb is bit0, and dont touch the bit31 => this is sign bit :)
+  result:= res._Int32;
+end;
+
+function pearsonHash32fromStr( str:string):integer;
+var
+  len:integer;
+  byteArray:Array of byte;
+  i: Integer;
+begin
+  len:= length(str);
+  setlength(byteArray, len);
+  for i := 1 to len do begin
+    byteArray[i-1]:= ord(str[i]);
+  end;
+
+
+  result:= pearsonHash32(byteArray, len);
+end;
+
 
 end.
