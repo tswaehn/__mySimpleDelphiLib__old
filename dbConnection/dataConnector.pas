@@ -13,27 +13,29 @@ type
   public
     procedure doConnect();
 
+    // table operations
     // use startQuery + getRow to browse through table
     procedure startQuery( tableName:string );
     function getRowFromTable( tableName:string ):TStringListPtr;
-
     // write to table
     procedure addRowToTable( tableName:string; row:TStringListPtr );
 
     //
     function getDatabaseFolder(): string;
 
-    //
+    // settings
     procedure showLocalSettings();
     procedure showGlobalSettings();
+    procedure setGlobalSetting(key:string; value:string);
+    function getGlobalSetting(key:string): string;
 
   private
     function getTable( tableName:string ): TCsvFileDatabase;
 
-  private
-    isConnected:boolean;
+  protected
     localSettings:TLocalSettings;
     globalSettings:TGlobalSettings;
+    isConnected:boolean;
 
     tables:TStringList;
     rowIndex: integer;
@@ -188,5 +190,16 @@ begin
     globalSettings.showSettings;
   end;
 end;
+
+procedure TDataConnector.setGlobalSetting(key:string; value:string);
+begin
+  globalSettings.setSetting(key, value);
+end;
+
+function TDataConnector.getGlobalSetting(key:string): string;
+begin
+  result:= globalSettings.getSetting(key);
+end;
+
 
 end.
