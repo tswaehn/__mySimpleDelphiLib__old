@@ -19,6 +19,7 @@ type
     function getRowFromTable( tableName:string ):TStringListPtr;
     // write to table
     procedure addRowToTable( tableName:string; row:TStringListPtr );
+    procedure storeTable( tableName:string );
 
     //
     function getDatabaseFolder(): string;
@@ -171,6 +172,21 @@ begin
   csvFileDatabase.addRowToMem( row );
 end;
 
+procedure TDataConnector.storeTable( tableName:string );
+var csvFileDatabase: TCsvFileDatabase;
+begin
+   if not isConnected then begin
+    raise Exception.Create('Database not connected');
+  end;
+
+  csvFileDatabase:= getTable(tableName);
+  if (csvFileDatabase = nil) then begin
+    raise Exception.Create('Fehlermeldung');
+  end;
+
+  csvFileDatabase.storeToFile();
+
+end;
 
 function TDataConnector.getDatabaseFolder(): string;
 begin
