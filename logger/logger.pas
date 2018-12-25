@@ -56,6 +56,7 @@ begin
     raise Exception.Create('Cannot open file '+filename);
   end;
 
+  self.progress('start logging');
 end;
 
 destructor TLog.destroy;
