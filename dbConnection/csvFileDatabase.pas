@@ -13,6 +13,7 @@ type
     function searchRowInMem( searchStr:string; searchCol:integer ):TStringListPtr;
     function getRowFromMem( index: integer ):TStringListPtr;
     function getRowMemCount():integer;
+    procedure clearAllRows();
 
     // add line to memory
     procedure addRowToMem( row: TStringListPtr );
@@ -72,6 +73,7 @@ destructor TCsvFileDatabase.destroy;
 begin
 
   clearAllRowsFromDBfromMem;
+  tableRows.Destroy();
 
   inherited destroy;
 end;
@@ -226,7 +228,7 @@ begin
       row:= TStringList( tableRows.Items[i] );
       row.Free;
     end;
-    tableRows.Free;
+    tableRows.clear;
   end;
 end;
 
@@ -309,6 +311,11 @@ begin
     exit;
   end;
   result:= tableRows.Count;
+end;
+
+procedure TCsvFileDatabase.clearAllRows();
+begin
+  self.clearAllRowsFromDBfromMem();
 end;
 
 end.

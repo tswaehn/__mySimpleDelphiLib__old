@@ -20,7 +20,7 @@ type
     // write to table
     procedure addRowToTable( tableName:string; row:TStringListPtr );
     procedure storeTable( tableName:string );
-
+    procedure clearTable( tableName:string );
     //
     function getDatabaseFolder(): string;
 
@@ -186,6 +186,21 @@ begin
 
   csvFileDatabase.storeToFile();
 
+end;
+
+procedure TDataConnector.clearTable( tableName:string );
+var csvFileDatabase: TCsvFileDatabase;
+begin
+   if not isConnected then begin
+    raise Exception.Create('Database not connected');
+  end;
+
+  csvFileDatabase:= getTable(tableName);
+  if (csvFileDatabase = nil) then begin
+    raise Exception.Create('Fehlermeldung');
+  end;
+
+  csvFileDatabase.clearAllRows();
 end;
 
 function TDataConnector.getDatabaseFolder(): string;
