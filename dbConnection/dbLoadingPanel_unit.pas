@@ -11,7 +11,8 @@ type
     ProgressBar1: TProgressBar;
     Timer1: TTimer;
 
-    procedure start( caption_:string; max:integer );
+    constructor Create(caption_:string; max:integer);
+
     procedure startWithTimer(  caption: string  );
     procedure updatePosition( value:integer );
     procedure done();
@@ -25,15 +26,14 @@ type
     { Public-Deklarationen }
   end;
 
-var
-  dbLoadingPanel: TdbLoadingPanel;
-
 implementation
 
 {$R *.dfm}
 
-procedure TdbLoadingPanel.start( caption_:string; max:integer );
+constructor TdbLoadingPanel.Create(caption_:string; max:integer);
 begin
+  inherited Create(nil);
+
   self.Caption:= caption_;
   progressbar1.Position:= 0;
   progressbar1.Max:= max;

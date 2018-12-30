@@ -2,7 +2,7 @@ unit csvFileDatabase;
 
 interface
 uses SysUtils, Classes, dialogs, mytypes,
-      csvHandler, baseObject;
+      csvHandler, baseObject, dbLoadingPanel_unit;
 
 type
   TCsvFileDataBase = class (TBaseObject)
@@ -137,6 +137,8 @@ var
   row:TStringList;
   csvHandler:TCsvHandler;
   header:TStringList;
+  i:integer;
+  dbLoadingPanel:TDBLoadingPanel;
 begin
   result:= false;
   clearAllRowsFromDBfromMem();
@@ -147,45 +149,57 @@ begin
   // open file
   csvHandler:= TCsvHandler.Create(filename);
 
-  // load all rows
+  header:= csvHandler.readLine();
+  // if header is empty
+  if (header=nil) then begin
+    // close file
+    csvHandler.Destroy;
+    exit;
+  end;
+
+  // check header
+  try
+    checkHeader(header);
+  except
+    // header is incorrect
+    totalRowCount:=0;
+    rewriteCsvFile();
+    // set empty mem
+    clearAllRowsFromDBfromMem();
+    // bye
+    csvHandler.Destroy;
+    exit;
+  end;
+
+  dbLoadingPanel:=TDBLoadingPanel.Create('loading from table...', totalRowCount);
+
+  // finally load all rows
+  i:=0;
   repeat
     row:= csvHandler.readLine();
     if (row <> nil) then begin
       tableRows.Add( row );
+      INC(i);
+      dbLoadingPanel.updatePosition(i);
     end;
   until row = nil;
+
   // close file
   csvHandler.Destroy;
 
-  // check header if non empty
-  if (tableRows.Count >= 1) then begin
-    header:= tableRows.Items[0];
-    try
-      checkHeader(header);
-    except
-      // header is incorrect
-      totalRowCount:=0;
-      rewriteCsvFile();
-      // set empty mem
-      clearAllRowsFromDBfromMem();
-    end;
+  dbLoadingPanel.Hide;
 
-    // strip header row now
-    tableRows.Delete(0);
-    header.Free;
-
-    // check the correct number of rows
-    if (totalRowCount <> tableRows.Count) then begin
-      // fix the database \TODO: create a copy before rewrite
-      totalRowCount:=0;
-      rewriteCsvFile();
-      // set empty mem
-      clearAllRowsFromDBfromMem();
-      //
-      raise Exception.Create('csvFileDatabase header row count incorrect');
-    end;
-
+  // check the correct number of rows
+  if (totalRowCount <> tableRows.Count) then begin
+    // fix the database \TODO: create a copy before rewrite
+    totalRowCount:=0;
+    rewriteCsvFile();
+    // set empty mem
+    clearAllRowsFromDBfromMem();
+    //
+    raise Exception.Create('csvFileDatabase header row count incorrect');
   end;
+
 
   totalRowCount:= tableRows.Count;
   result:= true;
