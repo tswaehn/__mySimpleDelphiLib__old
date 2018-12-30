@@ -11,7 +11,7 @@ type
     ProgressBar1: TProgressBar;
     Timer1: TTimer;
 
-    procedure start( max:integer );
+    procedure start( caption_:string; max:integer );
     procedure startWithTimer(  caption: string  );
     procedure updatePosition( value:integer );
     procedure done();
@@ -32,8 +32,9 @@ implementation
 
 {$R *.dfm}
 
-procedure TdbLoadingPanel.start( max:integer );
+procedure TdbLoadingPanel.start( caption_:string; max:integer );
 begin
+  self.Caption:= caption_;
   progressbar1.Position:= 0;
   progressbar1.Max:= max;
   self.Show();

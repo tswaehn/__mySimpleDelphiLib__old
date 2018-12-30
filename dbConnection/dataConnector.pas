@@ -17,6 +17,8 @@ type
     // use startQuery + getRow to browse through table
     procedure startQuery( tableName:string );
     function getRowFromTable( tableName:string ):TStringListPtr;
+    function getRowCount( tableName:string ):integer;
+
     // write to table
     procedure addRowToTable( tableName:string; row:TStringListPtr );
     procedure storeTable( tableName:string );
@@ -155,6 +157,22 @@ begin
   INC(rowIndex);
 
   result:= row;
+end;
+
+function TDataConnector.getRowCount( tableName:string ):integer;
+var csvFileDatabase: TCsvFileDatabase;
+    row:TStringListPtr;
+begin
+  if not isConnected then begin
+    raise Exception.Create('Database not connected');
+  end;
+
+  csvFileDatabase:= getTable(tableName);
+  if (csvFileDatabase = nil) then begin
+    raise Exception.Create('Fehlermeldung');
+  end;
+
+  result:= csvFileDatabase.getRowMemCount();
 end;
 
 procedure TDataConnector.addRowToTable( tableName:string; row:TStringListPtr );
