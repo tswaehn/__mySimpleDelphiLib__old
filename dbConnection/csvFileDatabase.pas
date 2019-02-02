@@ -289,12 +289,13 @@ var row:TStringList;
 begin
   // get the correct row
   rowPtr:= searchRowInMem( searchStr, searchCol );
-  row:= rowPtr^;
   if (rowPtr = nil) then begin
-    // create row if non exist
+  // create row if non exist
     row:= TStringList.Create;
     tableRows.Add(row);
     rowPtr:= TStringListPtr(row);
+  end else begin
+    row:= rowPtr^;
   end;
 
   // update
