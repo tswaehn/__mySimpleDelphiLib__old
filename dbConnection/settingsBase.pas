@@ -17,8 +17,10 @@ type
     public
       function getSetting(name:string):string;
       procedure setSetting(name: string; value: string );
-      function showSettings():boolean;
 
+      function getSettingCount():integer;
+
+      function showSettings():boolean;
       procedure storeSettings();
 
     private
@@ -71,6 +73,11 @@ begin
   csvFileDatabase.updateRowInMem( name, COL_NAME, @newRow );
 
   newRow.Free;
+end;
+
+function TSettings.getSettingCount():integer;
+begin
+  result:= csvFileDatabase.getRowMemCount();
 end;
 
 procedure TSettings.storeSettings();

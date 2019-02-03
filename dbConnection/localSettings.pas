@@ -19,12 +19,14 @@ constructor TLocalSettings.Create();
 begin
   inherited Create( '.\local.csv');
 
-  globalDatabaseFolder:= self.getSetting(GLOBAL_DATABASE_FOLDER);
-
-  if globalDatabaseFolder ='' then begin
+  if (getSettingCount() = 0) then begin
+    // we have an empty settings file
     setSetting(GLOBAL_DATABASE_FOLDER,'c:\temp\');
     storeSettings();
   end;
+
+  // load
+  globalDatabaseFolder:= self.getSetting(GLOBAL_DATABASE_FOLDER);
 
   myName:='local settings';
 end;
