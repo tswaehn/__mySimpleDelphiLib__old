@@ -2,7 +2,7 @@ unit csvHandler;
 
 interface
 uses Classes, SysUtils, Dialogs,
-    baseObject, mytypes;
+    baseObject, mytypes, fileHelpers;
 
 
 type
@@ -51,6 +51,10 @@ implementation
 constructor TCsvHandler.Create(filename: string;forceRecreate:boolean=false);
 begin
   inherited Create();
+
+  // check if folder to file exists, if not, create it
+  checkFolderIfNotExistsCreateIt( filename );
+
   // create if non-existent
   if (not fileexists(filename)) or (forceRecreate) then begin
     try

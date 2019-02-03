@@ -17,6 +17,14 @@ object dbLoadingPanel: TdbLoadingPanel
   OnHide = FormHide
   PixelsPerInch = 96
   TextHeight = 13
+  object Label2: TLabel
+    Left = 506
+    Top = 79
+    Width = 31
+    Height = 13
+    Alignment = taRightJustify
+    Caption = 'Label2'
+  end
   object ProgressBar1: TProgressBar
     Left = 24
     Top = 48
@@ -30,7 +38,7 @@ object dbLoadingPanel: TdbLoadingPanel
     Enabled = False
     Interval = 100
     OnTimer = Timer1Timer
-    Left = 296
-    Top = 88
+    Left = 16
+    Top = 8
   end
 end

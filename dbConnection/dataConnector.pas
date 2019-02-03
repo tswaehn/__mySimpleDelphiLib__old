@@ -1,7 +1,7 @@
 unit dataConnector;
 
 interface
-uses  SysUtils, Classes,
+uses  SysUtils, Classes, Dialogs,
       localSettings, globalSettings, mytypes,
       csvFileDatabase;
 
@@ -32,8 +32,11 @@ type
     procedure setGlobalSetting(key:string; value:string);
     function getGlobalSetting(key:string): string;
 
-  private
+  protected
     function getTable( tableName:string ): TCsvFileDatabase;
+    function checkDbIntegrity(): boolean; virtual;
+    function createNewDatabase():boolean; virtual;
+    procedure backupAllDatabases();
 
   protected
     localSettings:TLocalSettings;
@@ -63,29 +66,71 @@ begin
 end;
 
 procedure TDataConnector.doConnect();
+var ret:integer;
 begin
   // this is the local file that holds settings per computer only
   try
+    // try to load local settings
     localSettings:=  TLocalSettings.Create();
   except
     localSettings:= nil;
-    raise Exception.Create('TDataConnector.doConnect() failed - check local folder permissions.');
+    raise Exception.Create('TDataConnector.doConnect() error. Cannot create local.csv!');
   end;
 
-
+  // this is the remote file that holds all the database settings
   try
     // this is the main file for the database (shared with multiple computers)
     globalSettings:= TGlobalSettings.Create( localSettings.globalDatabaseFolder );
   except
     globalSettings:= nil;
-    raise Exception.Create('TDataConnector.doConnect() failed - check global folder permissions.');
+    raise Exception.Create('TDataConnector.doConnect() error. Cannot create '+ localSettings.globalDatabaseFolder+'!');
   end;
 
-  // check if all subtables are present
-  // todo
+  // check if all tables of the database are present
+  if (checkDbIntegrity() = false) then begin
 
+    ret:= messageDlg('It looks like database is not existing or damaged.'+
+                ' Please create a backup of your database now before continue or press CANCEL!', mtError, [mbOk,mbCancel], 0);
+
+    // check the button of msg
+    if (ret <> 1) then begin
+      // user pressed CANCEL
+      //
+      raise Exception.Create('TDataConnector.doConnect() failed.');
+    end;
+
+    // create a backup of current set
+    backupAllDatabases();
+
+    // create a new database
+    if (createNewDatabase() = false) then begin
+      // if create fails
+      raise Exception.Create('TDataConnector.createNewDatabase() failed');
+    end;
+
+  end;
+
+  // now we are connected :)
   isConnected:= true;
 end;
+
+function TDataConnector.checkDbIntegrity(): boolean;
+begin
+  // this is a virtual function, need to overwrite!
+  result:= false;
+end;
+
+function TDataConnector.createNewDatabase():boolean;
+begin
+  // this is a virtual function, need to overwrite!
+  result:= false;
+end;
+
+procedure TDataConnector.backupAllDatabases();
+begin
+  //
+end;
+
 
 function TDataConnector.getTable( tableName: string ): TCsvFileDatabase;
 var propertyName:string;
@@ -109,7 +154,7 @@ begin
   fileName:= globalSettings.getSetting( propertyName );
   if (fileName = '') then begin
     // if table does not exist
-    raise Exception.Create('Unknown table name '+tableName);
+    //raise Exception.Create('Unknown table name "'+tableName+'"');
     result:= nil;
     exit;
   end;

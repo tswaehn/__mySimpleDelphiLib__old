@@ -48,6 +48,7 @@ CONST COMPATIBLE_VERSION: string = '1.0';
 CONST FILE_TYPE: string = 'csvFileDatabase';
 
 CONST INDEX: string = '<index>';
+CONST EMPTY: string = '<empty>';
 
 implementation
 
@@ -171,7 +172,7 @@ begin
     exit;
   end;
 
-  dbLoadingPanel:=TDBLoadingPanel.Create('loading from table...', totalRowCount);
+  dbLoadingPanel:=TDBLoadingPanel.Create('loading from table... ', totalRowCount);
 
   // finally load all rows
   i:=0;
