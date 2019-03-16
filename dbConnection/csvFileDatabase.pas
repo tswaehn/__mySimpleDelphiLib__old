@@ -194,7 +194,7 @@ begin
   if (totalRowCount <> tableRows.Count) then begin
     // fix the database \TODO: create a copy before rewrite
     totalRowCount:=0;
-    rewriteCsvFile();
+    // Dangerous! Should happen after request... : rewriteCsvFile();
     // set empty mem
     clearAllRowsFromDBfromMem();
     //
