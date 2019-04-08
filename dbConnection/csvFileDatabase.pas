@@ -172,7 +172,7 @@ begin
     exit;
   end;
 
-  dbLoadingPanel:=TDBLoadingPanel.Create('loading from table... ', totalRowCount);
+  dbLoadingPanel:=TDBLoadingPanel.Create('loading from table ['+filename+']... ', totalRowCount);
 
   // finally load all rows
   i:=0;
@@ -198,7 +198,7 @@ begin
     // set empty mem
     clearAllRowsFromDBfromMem();
     //
-    raise Exception.Create('csvFileDatabase header row count incorrect');
+    raise Exception.Create('csvFileDatabase header row count incorrect ['+filename+']');
   end;
 
 
