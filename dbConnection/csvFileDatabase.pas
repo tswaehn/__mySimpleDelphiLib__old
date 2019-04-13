@@ -1,7 +1,7 @@
 unit csvFileDatabase;
 
 interface
-uses SysUtils, Classes, dialogs, mytypes,
+uses SysUtils, Classes, dialogs, windows, mytypes,
       csvHandler, baseObject, dbLoadingPanel_unit;
 
 type
@@ -31,6 +31,7 @@ type
     private
 
       procedure rewriteCsvFile();
+      procedure backupCsvFile();
       procedure checkHeader( header:TStringList );
 
     private
@@ -133,6 +134,29 @@ begin
   headerLine.Free;
 end;
 
+// create a backup copy of the current file
+procedure TCsvFileDatabase.backupCsvFile();
+var
+  backupFileName: string;
+  timstampStr: string;
+begin
+  if (filename = '') then begin
+    // no filename
+    exit;
+  end;
+  if (fileexists( filename ) = false ) then begin
+    // filename is invalid
+    exit;
+  end;
+
+  // prepare the date str
+  DateTimeToString( timstampStr,    'yyyy-mm-dd_hh-nn-ss-zzz', now() );
+  // prepare the final backup name
+  backupFileName:= filename + '.' + timstampStr + '.backup.csv';
+  // finally copy the file
+  CopyFile(pchar( filename ),pchar( backupFileName ), true);
+end;
+
 function TCsvFileDatabase.loadAllRowsFromDBintoMem():boolean;
 var
   row:TStringList;
@@ -163,6 +187,8 @@ begin
     checkHeader(header);
   except
     // header is incorrect
+    backupCsvFile();
+    // recreate a new correct file database
     totalRowCount:=0;
     rewriteCsvFile();
     // set empty mem
@@ -192,13 +218,17 @@ begin
 
   // check the correct number of rows
   if (totalRowCount <> tableRows.Count) then begin
-    // fix the database \TODO: create a copy before rewrite
+    // header line-count is incorrect
+    // fix the database
     totalRowCount:=0;
-    // Dangerous! Should happen after request... : rewriteCsvFile();
+    // create a copy
+    backupCsvFile();
+    // recreate
+    rewriteCsvFile();
     // set empty mem
     clearAllRowsFromDBfromMem();
     //
-    raise Exception.Create('csvFileDatabase header row count incorrect ['+filename+']');
+    raise Exception.Create('csvFileDatabase header <row count> incorrect ['+filename+']');
   end;
 
 
