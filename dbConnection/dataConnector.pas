@@ -154,7 +154,7 @@ begin
   fileName:= globalSettings.getSetting( propertyName );
   if (fileName = '') then begin
     // if table does not exist
-    //raise Exception.Create('Unknown table name "'+tableName+'"');
+    raise Exception.Create('Unknown table name "'+tableName+'"');
     result:= nil;
     exit;
   end;

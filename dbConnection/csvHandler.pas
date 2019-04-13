@@ -40,7 +40,7 @@ type
 
   end;
 
-const BUFFER_SIZE: integer = 100000;
+const BUFFER_SIZE: integer = 1000;
 const LE: AnsiString = #13+#10;
 const CSV_DELIMITER: char = ',';
 const CSV_QUOTE: char = '"';
