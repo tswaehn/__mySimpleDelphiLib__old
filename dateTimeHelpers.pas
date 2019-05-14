@@ -1,7 +1,7 @@
 unit dateTimeHelpers;
 
 interface
-uses SysUtils, Classes,dateUtils;
+uses SysUtils, Classes, dateUtils, Dialogs;
 
   // MySql <=> TDateTime
   function MySQLStringToDateTime( str:string ):TDateTime;
@@ -95,9 +95,15 @@ function strToTimestampInt( str: string ): Int64;
   glFmtSet: TFormatSettings;
   timestampInt: Int64;
 begin
-
+  //showmessage('string to covert: ', str);
   glFmtSet:= TFormatSettings.Create();
   glFmtSet.DecimalSeparator := '.';
+  glFmtSet.DateSeparator := '.';
+  glFmtSet.TimeSeparator := ':';
+  glFmtSet.LongTimeFormat := 'hh:nn:ss.zzz';
+  glFmtSet.LongDateFormat := 'dd.mm.yyyy';
+  glFmtSet.ShortTimeFormat := 'hh:nn:ss.zzz';
+  glFmtSet.ShortDateFormat := 'dd.mm.yyyy';
 
   dateTime:= StrToDateTime( str, glFmtSet );
 
