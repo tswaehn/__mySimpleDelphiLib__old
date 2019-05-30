@@ -1,7 +1,7 @@
 unit csvFileDatabase;
 
 interface
-uses SysUtils, Classes, dialogs, windows, mytypes,
+uses SysUtils, Classes, dialogs, windows, mytypes, StrUtils,
       csvHandler, baseObject, dbLoadingPanel_unit;
 
 type
@@ -14,6 +14,7 @@ type
     function getRowFromMem( index: integer ):TStringListPtr;
     function getRowMemCount():integer;
     procedure clearAllRows();
+    procedure sortTable();
 
     // add line to memory
     procedure addRowToMem( row: TStringListPtr );
@@ -255,6 +256,7 @@ begin
   // open file and add lines
   csvHandler:= TCsvHandler.Create(filename);
   header:= csvHandler.readLine();
+
   // row by row
   for i := 0 to tableRows.Count-1 do begin
     row:= tableRows.Items[i];
@@ -263,6 +265,67 @@ begin
   // close file
   csvHandler.Destroy;
 end;
+
+procedure TCsvFileDatabase.sortTable();
+var
+  rowTemp:TStringList;
+  rowCurrent:TStringList;
+  rowIndex:TStringList;
+  datetimeCurrent:TDateTime;
+  datetimeCurrentStr:string;
+  datetimeIndex:TDateTime;
+  datetimeIndexStr:string;
+  datetimeMin:string;
+  csvHandler:TCsvHandler;
+  header:TStringList;
+  I, J, MinIndex: Integer;
+  TempListToSort:TStringlist;
+begin
+  if (tableRows = nil) then begin
+    exit;
+  end;
+
+//  // create header
+//  totalRowCount:= tableRows.Count;
+//
+//  // open file and add lines
+//  csvHandler:= TCsvHandler.Create(filename);
+//  header:= csvHandler.readLine();
+//  // row by row
+//  for i := 0 to tableRows.Count-1 do begin
+//    row:= tableRows.Items[i];
+//    csvHandler.writeLine( @row );
+//  end;
+//  // close file
+//  csvHandler.Destroy;
+
+  if ( tableRows <> nil ) and ( tableRows.Count > 0 ) then begin
+    rowTemp :=  tableRows.Items[ 0 ];
+    datetimeMin := rowTemp[ 2 ];
+    for I := 1 to tableRows.Count-1 do begin
+      rowCurrent:= tableRows.Items[ I ] ;
+      datetimeCurrentStr := rowCurrent[ 2 ];
+
+      // seek the minimum
+      MinIndex := I + 1;
+      for J := I + 1 to tableRows.Count-1 do begin
+        rowIndex:= tableRows.Items[ J ];
+        datetimeIndexStr := rowIndex[ 2 ];
+        if datetimeMin >= datetimeIndexStr then begin
+          datetimeMin := datetimeIndexStr;
+          MinIndex := J;
+        end;
+      end;
+      if ( MinIndex > I + 1 ) then begin
+        rowTemp := rowCurrent;
+        rowCurrent :=  tableRows.Items[ MinIndex ];
+        tableRows.Items[ MinIndex ] := rowTemp;
+      end;
+    end;
+  end;
+
+end;
+
 
 procedure TCsvFileDatabase.clearAllRowsFromDBfromMem();
 var i:integer;
