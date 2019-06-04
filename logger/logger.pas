@@ -35,11 +35,22 @@ var
 implementation
 
 constructor TLog.Create();
-var filename: string;
+var logDir: string;
+    filename: string;
+    timestampStr: string;
 begin
   inherited Create();
 
-  filename:= '.\debug.log';
+  logDir:= '.\log\';
+
+  // prepare the date str
+  DateTimeToString( timestampStr,    'yyyy-mm-dd_hh-nn-ss-zzz', now() );
+  // prepare the final backup name
+  filename:= logDir+ 'debug_' + timestampStr + '.log';
+
+  if (directoryExists( logDir ) = false) then begin
+    mkdir( logDir );
+  end;
 
   // always re-create
   try

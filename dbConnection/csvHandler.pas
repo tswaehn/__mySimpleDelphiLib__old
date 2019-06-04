@@ -16,13 +16,15 @@ type
 
     function isEmpty():boolean;
 
-    procedure runTestCases();
+    protected
+      // can do override for special CSV styles/types
+      procedure runTestCases();  virtual;
+      function parseSingleLine(line: string): TStringList; virtual;
 
     private
       function getLine():string;
       procedure readBuffer();
 
-      function parseSingleLine(line: string): TStringList;
 
       function prepareWriteLine( line:TStringListPtr ): string;
 

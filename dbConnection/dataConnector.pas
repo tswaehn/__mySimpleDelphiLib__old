@@ -35,6 +35,7 @@ type
 
   protected
     function getTable( tableName:string ): TCsvFileDatabase;
+    procedure registerNewTable( tableName: string; filename:string );
     function checkDbIntegrity(): boolean; virtual;
     function createNewDatabase():boolean; virtual;
     procedure backupAllDatabases();
@@ -168,6 +169,17 @@ begin
   result:= csvFileDatabase;
   exit;
 
+end;
+
+procedure TDataConnector.registerNewTable( tableName: string; filename:string );
+var propertyName: string;
+begin
+  // add to mem
+  propertyName:= tableName + '_table';
+  globalSettings.setSetting( propertyName, filename );
+
+  // write to disk
+  globalSettings.storeSettings();
 end;
 
 procedure TDataConnector.startQuery( tableName:string );

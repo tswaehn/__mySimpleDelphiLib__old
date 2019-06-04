@@ -88,6 +88,10 @@ end;
 
 procedure TCsvFileDatabase.checkHeader(header:TStringList);
 begin
+  if (header = nil) then begin
+    raise Exception.Create('CSV file '+filename+' not a valid csvFileDatabase');
+  end;
+
 
   // version string
   if (AnsiCompareStr(VERSION_STR, header.Strings[0]) <> 0) then begin
@@ -176,11 +180,12 @@ begin
   csvHandler:= TCsvHandler.Create(filename);
 
   header:= csvHandler.readLine();
+
   // if header is empty
   if (header=nil) then begin
     // close file
     csvHandler.Destroy;
-    exit;
+    //exit;
   end;
 
   // check header

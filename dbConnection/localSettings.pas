@@ -1,7 +1,8 @@
 unit localSettings;
 
 interface
-uses settingsBase;
+uses settingsBase,
+      logger;
 
 type
   TLocalSettings = class(TSettings)
@@ -24,6 +25,9 @@ begin
     setSetting(GLOBAL_DATABASE_FOLDER,'c:\temp\');
     storeSettings();
   end;
+
+  // debug
+  debugLog.notice('global settings come from ' + getSetting(GLOBAL_DATABASE_FOLDER) );
 
   // load
   globalDatabaseFolder:= self.getSetting(GLOBAL_DATABASE_FOLDER);
