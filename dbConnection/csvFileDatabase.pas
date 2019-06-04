@@ -285,20 +285,6 @@ begin
     exit;
   end;
 
-//  // create header
-//  totalRowCount:= tableRows.Count;
-//
-//  // open file and add lines
-//  csvHandler:= TCsvHandler.Create(filename);
-//  header:= csvHandler.readLine();
-//  // row by row
-//  for i := 0 to tableRows.Count-1 do begin
-//    row:= tableRows.Items[i];
-//    csvHandler.writeLine( @row );
-//  end;
-//  // close file
-//  csvHandler.Destroy;
-
   if ( tableRows <> nil ) and ( tableRows.Count > 0 ) then begin
     rowTemp :=  tableRows.Items[ 0 ];
     datetimeMin := rowTemp[ 2 ];
