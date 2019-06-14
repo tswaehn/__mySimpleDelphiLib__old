@@ -273,7 +273,6 @@ begin
   result:= res;
 end;
 
-
 (*
     typically there is an option of using TStringList directly
     HOWEVER: TStringList cannot consequently quote all fields
@@ -353,8 +352,9 @@ begin
   if (idx > 0) then begin
     line:= Copy(buffer, 1, idx-1);
     delete(buffer,1, idx-1 + length(LE) );
-
     result:= line;
+    // deal with empty lines
+    if idx = 1 then result:= 'TMMS_EMPTY_LINE';
     exit;
   end;
 
