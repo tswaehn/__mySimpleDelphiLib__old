@@ -32,7 +32,7 @@ type
     procedure runTestCases(); override;
 
     // override the parsing function
-    function parseSingleLine(line: string): TStringList; override;
+    class function parseSingleLine(line: string): TStringList; override;
 
   end;
 
@@ -84,7 +84,7 @@ begin
 end;
 
 // override
-function TCsvHandlerSimple.parseSingleLine(line: string): TStringList;
+class function TCsvHandlerSimple.parseSingleLine(line: string): TStringList;
 var
     res: TStringList;
     temp: string;

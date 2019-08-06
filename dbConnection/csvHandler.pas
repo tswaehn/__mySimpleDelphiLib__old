@@ -16,19 +16,22 @@ type
 
     function isEmpty():boolean;
 
+    class function parseSingleLine(line: string): TStringList; virtual;
+    class function copyAndStripQuotes( line:string; index:integer; cpyLen:integer):string;
+
     protected
       // can do override for special CSV styles/types
       procedure runTestCases();  virtual;
-      function parseSingleLine(line: string): TStringList; virtual;
+      //function parseSingleLine(line: string): TStringList; virtual;
 
     private
       function getLine():string;
       procedure readBuffer();
 
+      //function copyAndStripQuotes( line:string; index:integer; cpyLen:integer):string;
 
       function prepareWriteLine( line:TStringListPtr ): string;
 
-      function copyAndStripQuotes( line:string; index:integer; cpyLen:integer):string;
 
       procedure addToDisposeList( stringListPtr: TStringListPtr );
 
@@ -150,8 +153,7 @@ begin
   testCases.Free();
 end;
 
-
-function TCsvHandler.copyAndStripQuotes( line:string; index:integer; cpyLen:integer):string;
+class function TCsvHandler.copyAndStripQuotes( line:string; index:integer; cpyLen:integer):string;
 var temp:string;
   i: Integer;
 begin
@@ -167,8 +169,7 @@ begin
   result:= temp;
 end;
 
-
-function TCsvHandler.parseSingleLine(line: string): TStringList;
+class function TCsvHandler.parseSingleLine(line: string): TStringList;
 var
     res: TStringList;
     temp: string;
@@ -322,7 +323,6 @@ begin
   fileStream.Seek(0, soFromBeginning);
   buffer:= '';
 end;
-
 
 function TCsvHandler.getLine():string;
 var byteArray: TBytes;
