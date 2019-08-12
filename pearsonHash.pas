@@ -77,7 +77,7 @@ begin
   for j := 0 to 2 do begin
     b:= byteArray[0];
     h:= T[ (b + j) mod 256 ];
-    for i := 1 to len do begin
+    for i := 1 to (len-1) do begin
       b:= byteArray[i];
       h:= T[ h xor b ];
     end;
@@ -117,7 +117,7 @@ begin
   for j := 0 to 3 do begin
     b:= byteArray[0];
     h:= T[ (b + j) mod 256 ];
-    for i := 1 to len do begin
+    for i := 1 to (len-1) do begin
       b:= byteArray[i];
       h:= T[ h xor b ];
     end;
