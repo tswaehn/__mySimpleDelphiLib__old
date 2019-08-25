@@ -23,6 +23,8 @@ type
     procedure Timer1Timer(Sender: TObject);
   private
     { Private-Deklarationen }
+    progressSize: integer;
+    value: integer;
   public
     { Public-Deklarationen }
   end;
@@ -39,6 +41,12 @@ begin
   progressbar1.Position:= 0;
   progressbar1.Max:= max;
   label2.Caption:= 'total '+intToStr(progressbar1.Max);
+
+  progressSize:= round(max / 10);
+  if (progressSize=0) then begin
+    progressSize:= 1;
+  end;
+
   self.Show();
 end;
 
@@ -54,8 +62,13 @@ end;
 
 procedure TdbLoadingPanel.updatePosition(value: Integer);
 begin
-  progressbar1.Position:= value;
-  application.ProcessMessages();
+  self.value:= value;
+
+  if ((value mod progressSize) = 0)  then begin
+    progressbar1.Position:= value;
+    application.ProcessMessages();
+  end;
+
 end;
 
 procedure TdbLoadingPanel.done;

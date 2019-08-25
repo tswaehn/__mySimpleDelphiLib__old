@@ -216,12 +216,6 @@ begin
 
   dbLoadingPanel:=TDBLoadingPanel.Create('loading from table ['+filename+']... ', totalRowCount);
 
-  progressSize:= round(totalRowCount / 10);
-  if (progressSize=0) then begin
-    progressSize:= 1;
-  end;
-
-
   // finally load all rows
   i:=0;
   repeat
@@ -229,11 +223,7 @@ begin
     if (row <> nil) then begin
       tableRows.Add( row );
       INC(i);
-      if (i mod progressSize) = 0 then begin
-        dbLoadingPanel.updatePosition(i);
-      end;
-
-
+      dbLoadingPanel.updatePosition(i);
     end;
   until row = nil;
 
