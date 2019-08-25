@@ -128,7 +128,7 @@ end;
 
 procedure TCsvFileDatabase.rewriteCsvFile();
 var headerLine:TStringList;
-    csvHandler:TCsvHandler;
+    csvHandler:TCsvBlockHandler;
 begin
   headerLine:= TStringList.Create();
   //totalLineCount:= 0;
@@ -140,7 +140,7 @@ begin
   headerLine.Add( intToStr( totalRowCount ) );
 
   // open file
-  csvHandler:= TCsvHandler.Create(filename, true);
+  csvHandler:= TCsvBlockHandler.Create(filename, true);
   csvHandler.writeLine( @headerLine );
   csvHandler.Destroy;
 
@@ -255,7 +255,7 @@ end;
 function TCsvFileDatabase.saveAllRowsFromMemIntoDB():boolean;
 var
   row:TStringList;
-  csvHandler:TCsvHandler;
+  csvHandler:TCsvBlockHandler;
   header:TStringList;
   I: Integer;
 begin
@@ -269,7 +269,7 @@ begin
   rewriteCsvFile();
 
   // open file and add lines
-  csvHandler:= TCsvHandler.Create(filename);
+  csvHandler:= TCsvBlockHandler.Create(filename);
   header:= csvHandler.readLine();
 
   // row by row
