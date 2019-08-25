@@ -99,14 +99,16 @@ var
   I: Integer;
   key:string;
   value:string;
-  row:TStringListPtr;
+  rowPtr:TStringListPtr;
+  row:TStringList;
 begin
   // clean up
   valueList.Strings.Clear;
 
   // fill up
   for I := 0 to (csvFileDatabase.getRowMemCount()-1) do begin
-    row:= csvFileDatabase.getRowFromMem(i);
+    rowPtr:= csvFileDatabase.getRowFromMem(i);
+    row:= rowPtr^;
     key:= row.Strings[COL_NAME];
     value:= row.Strings[COL_VALUE];
     valueList.InsertRow(key, value, true);
