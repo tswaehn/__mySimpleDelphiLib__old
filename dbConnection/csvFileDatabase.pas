@@ -2,7 +2,7 @@ unit csvFileDatabase;
 
 interface
 uses SysUtils, Classes, dialogs, windows, mytypes, StrUtils,
-      csvHandler, baseObject, dbLoadingPanel_unit;
+      csvHandler, csvBlockHandler, baseObject, dbLoadingPanel_unit;
 
 type
   TCsvFileDataBase = class (TBaseObject)
@@ -174,10 +174,11 @@ end;
 function TCsvFileDatabase.loadAllRowsFromDBintoMem():boolean;
 var
   row:TStringList;
-  csvHandler:TCsvHandler;
+  csvHandler:TCsvBlockHandler;
   header:TStringList;
   i:integer;
   dbLoadingPanel:TDBLoadingPanel;
+  progressSize: integer;
 begin
   result:= false;
   clearAllRowsFromDBfromMem();
@@ -186,7 +187,7 @@ begin
   tableRows:= TList.Create();
 
   // open file
-  csvHandler:= TCsvHandler.Create(filename);
+  csvHandler:= TCsvBlockHandler.Create(filename);
 
   header:= csvHandler.readLine();
 
@@ -215,6 +216,12 @@ begin
 
   dbLoadingPanel:=TDBLoadingPanel.Create('loading from table ['+filename+']... ', totalRowCount);
 
+  progressSize:= round(totalRowCount / 10);
+  if (progressSize=0) then begin
+    progressSize:= 1;
+  end;
+
+
   // finally load all rows
   i:=0;
   repeat
@@ -222,7 +229,11 @@ begin
     if (row <> nil) then begin
       tableRows.Add( row );
       INC(i);
-      dbLoadingPanel.updatePosition(i);
+      if (i mod progressSize) = 0 then begin
+        dbLoadingPanel.updatePosition(i);
+      end;
+
+
     end;
   until row = nil;
 
