@@ -46,7 +46,7 @@ implementation
 constructor TSettings.Create(csvFilename:string);
 begin
   inherited Create(nil);
-  csvFileDatabase:= TCsvFileDataBase.Create(csvFilename);
+  csvFileDatabase:= TCsvFileDataBase.Create('settings', csvFilename);
 
   self.Visible:= false;
   myName:='settings';

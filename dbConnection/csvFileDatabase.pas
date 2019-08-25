@@ -6,8 +6,10 @@ uses SysUtils, Classes, dialogs, windows, mytypes, StrUtils,
 
 type
   TCsvFileDataBase = class (TBaseObject)
-    constructor Create( filename_:string );
+    constructor Create( tableName_: string; filename_:string );
     destructor Destroy(); override;
+
+    function getTableName(): string;
 
     // mem functions
     function searchRowInMem( searchStr:string; searchCol:integer ):TStringListPtr;
@@ -38,6 +40,7 @@ type
     private
 
       filename:string;
+      tablename:string;
       version:string;
       lastModify: string;
       totalRowCount:integer;
@@ -54,11 +57,12 @@ CONST EMPTY: string = '<empty>';
 
 implementation
 
-constructor TCsvFileDataBase.Create(filename_: string);
+constructor TCsvFileDataBase.Create(tableName_: string; filename_: string);
 begin
   inherited Create();
 
   filename:= filename_;
+  tablename:= tableName_;
   totalRowCount:= 0;
   tableRows:= nil;
 
@@ -79,6 +83,11 @@ begin
   tableRows.Destroy();
 
   inherited destroy;
+end;
+
+function TCsvFileDatabase.getTableName(): string;
+begin
+  result:= tableName;
 end;
 
 procedure TCsvFileDatabase.storeToFile();

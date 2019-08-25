@@ -13,17 +13,6 @@ type
   public
     procedure doConnect();
 
-    // table operations
-    // use startQuery + getRow to browse through table
-    procedure sortTable( tableName:string );
-    procedure startQuery( tableName:string );
-    function getRowFromTable( tableName:string ):TStringListPtr;
-    function getRowCount( tableName:string ):integer;
-
-    // write to table
-    procedure addRowToTable( tableName:string; row:TStringListPtr );
-    procedure storeTable( tableName:string );
-    procedure clearTable( tableName:string );
     //
     function getDatabaseFolder(): string;
 
@@ -161,7 +150,7 @@ begin
   end;
 
   fileName:= localSettings.globalDatabaseFolder + fileName;
-  csvFileDatabase:= TCsvFileDatabase.Create( fileName );
+  csvFileDatabase:= TCsvFileDatabase.Create( tableName, fileName );
 
   // add table to list
   tables.AddObject( propertyName, csvFileDatabase );
@@ -180,117 +169,6 @@ begin
 
   // write to disk
   globalSettings.storeSettings();
-end;
-
-procedure TDataConnector.startQuery( tableName:string );
-var csvFileDatabase: TCsvFileDatabase;
-begin
-  if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  rowIndex:= 0;
-end;
-
-function TDataConnector.getRowFromTable( tableName:string ):TStringListPtr;
-var csvFileDatabase: TCsvFileDatabase;
-    row:TStringListPtr;
-begin
-  if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  row:= csvFileDatabase.getRowFromMem(rowIndex);
-  INC(rowIndex);
-
-  result:= row;
-end;
-
-function TDataConnector.getRowCount( tableName:string ):integer;
-var csvFileDatabase: TCsvFileDatabase;
-    row:TStringListPtr;
-begin
-  if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  result:= csvFileDatabase.getRowMemCount();
-end;
-
-procedure TDataConnector.addRowToTable( tableName:string; row:TStringListPtr );
-var csvFileDatabase: TCsvFileDatabase;
-begin
-  if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  csvFileDatabase.addRowToMem( row );
-end;
-
-procedure TDataConnector.sortTable( tableName:string );
-var csvFileDatabase: TCsvFileDatabase;
-begin
-  if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  csvFileDatabase.sortTable();
-end;
-
-procedure TDataConnector.storeTable( tableName:string );
-var csvFileDatabase: TCsvFileDatabase;
-begin
-   if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  csvFileDatabase.storeToFile();
-
-end;
-
-procedure TDataConnector.clearTable( tableName:string );
-var csvFileDatabase: TCsvFileDatabase;
-begin
-   if not isConnected then begin
-    raise Exception.Create('Database not connected');
-  end;
-
-  csvFileDatabase:= getTable(tableName);
-  if (csvFileDatabase = nil) then begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  csvFileDatabase.clearAllRows();
 end;
 
 function TDataConnector.getDatabaseFolder(): string;
