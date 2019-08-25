@@ -47,7 +47,9 @@ begin
     progressSize:= 1;
   end;
 
-  self.Show();
+  if (max > 100) then begin
+    self.Show();
+  end;
 end;
 
 procedure TdbLoadingPanel.startWithTimer( caption: string );
@@ -65,8 +67,10 @@ begin
   self.value:= value;
 
   if ((value mod progressSize) = 0)  then begin
-    progressbar1.Position:= value;
-    application.ProcessMessages();
+    if (self.Visible) then begin
+      progressbar1.Position:= value;
+      application.ProcessMessages();
+    end;
   end;
 
 end;
