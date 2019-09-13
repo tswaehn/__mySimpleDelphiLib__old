@@ -240,7 +240,7 @@ begin
     // create a copy
     backupCsvFile();
     // recreate
-    rewriteCsvFile();
+    // rewriteCsvFile();
     // set empty mem
     clearAllRowsFromDBfromMem();
     //
