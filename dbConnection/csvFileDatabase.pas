@@ -64,7 +64,9 @@ begin
   filename:= filename_;
   tablename:= tableName_;
   totalRowCount:= 0;
-  tableRows:= nil;
+
+  // create empty list
+  tableRows:= TList.Create();
 
   try
     loadAllRowsFromDBintoMem();
@@ -145,7 +147,7 @@ begin
   csvHandler.Destroy;
 
   // free line
-  headerLine.Free;
+  headerLine.Destroy;
 end;
 
 // create a backup copy of the current file
@@ -183,13 +185,11 @@ begin
   result:= false;
   clearAllRowsFromDBfromMem();
 
-  // create empty list
-  tableRows:= TList.Create();
 
   // open file
   csvHandler:= TCsvBlockHandler.Create(filename);
 
-  header:= csvHandler.readLine();
+  header:= csvHandler.readLineAndCreateTStringList();
 
   // if header is empty
   if (header=nil) then begin
@@ -201,6 +201,7 @@ begin
   // check header
   try
     checkHeader(header);
+    header.Destroy();
   except
     // header is incorrect
     backupCsvFile();
@@ -219,7 +220,7 @@ begin
   // finally load all rows
   i:=0;
   repeat
-    row:= csvHandler.readLine();
+    row:= csvHandler.readLineAndCreateTStringList();
     if (row <> nil) then begin
       tableRows.Add( row );
       INC(i);
@@ -231,6 +232,7 @@ begin
   csvHandler.Destroy;
 
   dbLoadingPanel.Hide;
+  dbLoadingPanel.Destroy();
 
   // check the correct number of rows
   if (totalRowCount <> tableRows.Count) then begin
@@ -270,7 +272,7 @@ begin
 
   // open file and add lines
   csvHandler:= TCsvBlockHandler.Create(filename);
-  header:= csvHandler.readLine();
+  header:= csvHandler.readLineAndCreateTStringList();
 
   // row by row
   for i := 0 to tableRows.Count-1 do begin
@@ -335,7 +337,8 @@ begin
   if tableRows <> nil then begin
     for I := 0 to tableRows.Count-1 do begin
       row:= TStringList( tableRows.Items[i] );
-      row.Free;
+      row.Destroy();
+      tableRows.Items[i]:= nil;
     end;
     tableRows.clear;
   end;

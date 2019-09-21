@@ -65,11 +65,11 @@ end;
 procedure TdbLoadingPanel.updatePosition(value: Integer);
 begin
   self.value:= value;
+  application.ProcessMessages();
 
   if ((value mod progressSize) = 0)  then begin
     if (self.Visible) then begin
       progressbar1.Position:= value;
-      application.ProcessMessages();
     end;
   end;
 

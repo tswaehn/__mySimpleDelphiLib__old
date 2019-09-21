@@ -11,7 +11,7 @@ type
     destructor destroy(); override;
 
     procedure rewind();
-    function readLine():TStringList;
+    function readLineAndCreateTStringList():TStringList;
     procedure writeLine( line: TStringListPtr );
 
     function isEmpty():boolean;
@@ -266,7 +266,7 @@ begin
   mDisposeList[mDisposeListCount-1]:= stringListPtr;
 end;
 
-function TCsvBlockHandler.readLine():TStringList;
+function TCsvBlockHandler.readLineAndCreateTStringList():TStringList;
 var
   res:TStringList;
   line: string;
