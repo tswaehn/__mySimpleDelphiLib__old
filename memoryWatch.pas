@@ -9,6 +9,7 @@ type
     constructor Create();
     procedure start();
     function finish(): int64;
+    function diffStr(): string;
 
     private
       function memoryUsed():int64;
@@ -65,6 +66,17 @@ function TMemoryWatch.finish(): int64;
 begin
   mDelta:= CurrentProcessMemory() - mStartValue;
   result:= mDelta;
+end;
+
+function TMemoryWatch.diffStr(): string;
+var delta: int64;
+begin
+  delta:= round(mDelta/1024/1024);
+  if (delta > 0) then begin
+    result:= '+' + intToStr(delta) + 'MB';
+  end else begin
+    result:= intToStr(delta) + 'MB';
+  end;
 end;
 
 end.
