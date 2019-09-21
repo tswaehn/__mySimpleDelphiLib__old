@@ -46,13 +46,13 @@ begin
     with VerValue^ do
     begin
       // Major
-      Result[1] := dwFileVersionMS shr 16;
+      Result[1] := smallInt(dwFileVersionMS shr 16);
       // Minor
-      Result[2] := dwFileVersionMS and $FFFF;
+      Result[2] := smallInt(dwFileVersionMS and $0000FFFF);
       // Release
-      Result[3] := dwFileVersionLS shr 16;
+      Result[3] := smallInt(dwFileVersionLS shr 16);
       // Build
-      Result[4] := dwFileVersionLS and $FFFF;
+      Result[4] := smallInt(dwFileVersionLS and $0000FFFF);
     end;
   end;
   // Speicher freigeben (Dateiinformationen).
