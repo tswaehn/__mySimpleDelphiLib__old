@@ -52,7 +52,8 @@ type
   end;
 
 //const BUFFER_SIZE: integer = 100000000;
-const LE: char = #10;
+const LE_STR: string = #13+#10;
+const NEW_LINE_CHAR: char = #10;
 const CSV_DELIMITER: char = ',';
 const CSV_QUOTE: char = '"';
 const CSV_SPACE: char = #32;
@@ -306,7 +307,7 @@ begin
     end;
   end;
 
-  res:= res + LE;
+  res:= res + LE_STR;
 
   result:=res;
 end;
@@ -342,7 +343,7 @@ begin
 
   // all bytes are in [byteArray], byte count is [fileSize]
   for i := lastIdx to (fileSize-1) do begin
-    if (byteArray[i] = ord(LE)) then begin
+    if (byteArray[i] = ord(NEW_LINE_CHAR)) then begin
       count:= i - lastIdx;
       count:= count - 1; // remove -1 for #13 -- this smells \TODO: clean up
       SetString(lineAnsiStr, PAnsiChar(@byteArray[lastIdx]), count);
