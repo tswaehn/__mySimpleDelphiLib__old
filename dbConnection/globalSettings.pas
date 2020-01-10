@@ -13,8 +13,8 @@ implementation
 
 constructor TGlobalSettings.Create(databaseDir:string);
 begin
-  inherited Create( databaseDir+'.\global.csv');
-
+//  inherited Create( databaseDir+'.\global.csv');
+  inherited Create( databaseDir+'/global.csv');
   myName:='global settings';
 end;
 
